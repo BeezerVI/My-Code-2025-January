@@ -1,0 +1,15 @@
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\bin\Debug\net8.0\RPGTest.exe
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\bin\Debug\net8.0\RPGTest.deps.json
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\bin\Debug\net8.0\RPGTest.runtimeconfig.json
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\bin\Debug\net8.0\RPGTest.dll
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\bin\Debug\net8.0\RPGTest.pdb
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.AssemblyInfoInputs.cache
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.AssemblyInfo.cs
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.csproj.CoreCompileInputs.cache
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.sourcelink.json
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.dll
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\refint\RPGTest.dll
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.pdb
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\RPGTest.genruntimeconfig.cache
+C:\Users\dusti\OneDrive\Desktop\Programing for School\My Code 2025 January\RPGCombat\RPGTest\obj\Debug\net8.0\ref\RPGTest.dll
