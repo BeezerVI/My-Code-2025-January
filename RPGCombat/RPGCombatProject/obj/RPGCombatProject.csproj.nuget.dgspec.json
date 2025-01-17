@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGTest\\RPGTest.csproj": {}
+    "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGCombatProject\\RPGCombatProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGTest\\RPGTest.csproj": {
+    "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGCombatProject\\RPGCombatProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGTest\\RPGTest.csproj",
-        "projectName": "RPGTest",
-        "projectPath": "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGTest\\RPGTest.csproj",
+        "projectUniqueName": "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGCombatProject\\RPGCombatProject.csproj",
+        "projectName": "RPGCombatProject",
+        "projectPath": "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGCombatProject\\RPGCombatProject.csproj",
         "packagesPath": "C:\\Users\\dusti\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGTest\\obj\\",
+        "outputPath": "C:\\Users\\dusti\\OneDrive\\Desktop\\Programing for School\\My Code 2025 January\\RPGCombat\\RPGCombatProject\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\dusti\\AppData\\Roaming\\NuGet\\NuGet.Config"
