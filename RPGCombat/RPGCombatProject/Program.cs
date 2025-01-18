@@ -22,7 +22,6 @@ namespace RPGCombatProject
     public class Creature
     {
         public string Name { get; set; }
-        public string ID { get; set; }
         public bool IsPlayer { get; set; }
         public bool IsDead { get; set; }
         public int Health { get; set; }
@@ -31,10 +30,9 @@ namespace RPGCombatProject
         public List<Effect> Effects { get; set; }
 
         // Constructor to initialize a Creature object
-        public Creature(string name, string id, bool isPlayer, bool isDead, int health, int maxHealth, int shield, List<Effect> effects)
+        public Creature(string name, bool isPlayer = false, bool isDead = false, int maxHealth = 100, int health = 100, int shield = 0, List<Effect>? effects = null)
         {
             Name = name;
-            ID = id;
             IsPlayer = isPlayer;
             IsDead = isDead;
             Health = health;
@@ -66,16 +64,21 @@ namespace RPGCombatProject
             // Example data for testing
             var enemies = new List<Creature>
             {
-                new Creature("Slim", "1", false, false, 30, 100, 5, new List<Effect>()),
-                new Creature("Giant Bug", "2", false, false, 80, 120, 0, new List<Effect>
+                new Creature("Slim"),
+                new Creature("Giant Bug", effects: new List<Effect>
                 {
                     new Effect("Frost", "E1", 1),
                     new Effect("Poisoned", "E2", 2)
                 })
             };
 
-            var player = new Creature("You", "P1", true, false, 56, 150, 10, new List<Effect>());
+            // Making it a list to allow for multiple players in the future
+            var player = new List<Creature>
+            {
+                new Creature("You", true, false, 56, 150, 10),
+            };
 
+            // This is an example hand of cards that the player can use
             var hand = new List<Card>
             {
                 new Card("Sword", 1, "Deal 6 damage"),
@@ -83,22 +86,42 @@ namespace RPGCombatProject
                 new Card("Deflect", 1, "Gain 5 Shield")
             };
 
+            int actionsRemaining = 3;
+            int enemieTarget = 0;
+            int playerTarget = 0;
+
             // Display game state
-            PrintCreatureList("Enemies", enemies, "1");
-            PrintCreatureList("Your Team", new List<Creature> { player }, "P1");
-            CombatOptions(3, hand);
+            PrintCreatureList("Enemies", enemies, enemieTarget);
+            PrintCreatureList("Your Team", player, playerTarget);
+            CombatOptions(actionsRemaining, hand);
         }
 
-        static void PrintCreatureList(string title, List<Creature> creatures, string targetID)
+        static void PrintCreatureList(string title, List<Creature> creatures, int targetedCreature)
         {
-            Console.WriteLine(CreateCenteredText(title, 60, '='));
+        // Print the title centered within a 60-character wide line, filled with '=' characters
+        Console.WriteLine(CreateCenteredText(title, 60, '='));
+
+        // Initialize an index variable to keep track of the current index in the foreach loop
+        int index = 0;
+
+        // Iterate through each creature in the list
             foreach (var creature in creatures)
             {
-                string marker = creature.ID == targetID ? ">> " : "   ";
+                // Determine if the current creature is the target by comparing indices
+                string marker = index == targetedCreature ? ">> " : "   ";
+
+                // Print the creature's name with a marker if it is the target
                 Console.WriteLine($"{marker}{creature.Name}");
+
+                // Print the creature's health, max health, and shield (if any)
                 Console.WriteLine($"   - HP: {creature.Health} / {creature.MaxHealth}" +
-                                  $"{(creature.Shield > 0 ? $" | Shield: {creature.Shield}" : "")}");
-                Console.WriteLine($"   - Effects: {EffectList(creature.Effects)}");
+                                $"{(creature.Shield > 0 ? $" | Shield: {creature.Shield}" : "")}");
+
+                // Print the list of effects on the creature
+                Console.WriteLine($"   - Effects: {EffectList(creature.Effects)}\n");
+
+                // Increment the index variable
+                index++;
             }
         }
 
@@ -111,16 +134,16 @@ namespace RPGCombatProject
         static void CombatOptions(int actionsRemaining, List<Card> playersHand)
         {
             Console.WriteLine(CreateCenteredText("Combat Options", 60, '-'));
-            Console.WriteLine($"[{actionsRemaining} Actions Remaining]");
+            Console.WriteLine($"[{actionsRemaining} Actions Remaining]\n");
             for (int i = 0; i < playersHand.Count; i++)
             {
                 var card = playersHand[i];
                 Console.WriteLine($"{i + 1}. {card.Name}    [Cost: {card.Actions} Action(s)]");
-                Console.WriteLine($"   - {card.CardAbilitys}");
+                Console.WriteLine($"   - {card.CardAbilitys}\n");
             }
         }
 
-        static string CreateCenteredText(string text, int width, char fillChar)
+        static string CreateCenteredText(string text = "Example", int width = 50, char fillChar = '-')
         {
             if (text.Length >= width) return text;
             int leftPadding = (width - text.Length) / 2;
