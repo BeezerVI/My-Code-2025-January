@@ -7,15 +7,15 @@ namespace RPGCombatProject
     public class Effect
     {
         public string EffectName { get; set; }
-        public string EffectID { get; set; }
         public int Duration { get; set; }
+        public int Strength { get; set; }
 
         // Constructor to initialize an Effect object
-        public Effect(string effectName, string effectID, int duration)
+        public Effect(string effectName, int duration = 1, int strength = 1)
         {
             EffectName = effectName;
-            EffectID = effectID;
             Duration = duration;
+            Strength = strength;
         }
     }
 
@@ -67,8 +67,8 @@ namespace RPGCombatProject
                 new Creature("Slim"),
                 new Creature("Giant Bug", effects: new List<Effect>
                 {
-                    new Effect("Frost", "E1", 1),
-                    new Effect("Poisoned", "E2", 2)
+                    new Effect("Frost", 1, 2),
+                    new Effect("Poisoned", 2)
                 })
             };
 
@@ -174,17 +174,29 @@ namespace RPGCombatProject
                     // Gain 5 Shield
                     playersTeam[playerTargeted].Shield += 5;
                     break;
-                //case "Frost":
+                case "Frost":
                     // Deal 1 damage to all enemies and afflict 3 Frost
-
+                    foreach (var enemy in enemieCreatures)
+                    {
+                        enemy.Health -= 1;
+                        enemy.Effects.Add(new Effect("Frost", 3, 1));
+                    }
+                    break;
             }
         }
 
-        static void Write(string text)
+        static void Write(string text, bool waitForInput = true)
         // Write a line of text to the console and wait for the user to press Enter
         {
-            Console.WriteLine(text + "\nPress Enter to continue...");
-            Console.ReadLine();
+            if (waitForInput)
+            {
+                Console.WriteLine(text + "\nPress Enter to continue...");
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine(text);
+            }
         }
 
         static void DisplayGameState(List<Creature> enemieCreatures, List<Creature> playersTeam, int enemieTargeted, int playerTargeted, int actionsRemaining, List<Card> playersHand)
@@ -217,7 +229,7 @@ namespace RPGCombatProject
             return false;
         }
 
-        static void PrintCreatureList(string title, List<Creature> creatures, int targetedCreature)
+        static void PrintCreatureList(string title, List<Creature> creatures, int targetedCreature = 0)
         {
         // Print the title centered within a 60-character wide line, filled with '=' characters
         Console.WriteLine(CreateCenteredText(title, 60, '='));
@@ -249,7 +261,7 @@ namespace RPGCombatProject
         static string EffectList(List<Effect> effects)
         {
             if (effects.Count == 0) return "None";
-            return string.Join(", ", effects.Select(e => $"{e.EffectName} ({e.Duration})"));
+            return string.Join(", ", effects.Select(e => $"{e.EffectName}{new string('|', e.Duration)}{new string('*', e.Strength)}"));
         }
 
         static void CombatOptions(int actionsRemaining, List<Card> playersHand)
