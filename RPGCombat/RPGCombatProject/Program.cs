@@ -75,7 +75,8 @@ namespace RPGCombatProject
             // Making it a list to allow for multiple players in the future
             var player = new List<Creature>
             {
-                new Creature("You", true, false, 56, 150, 10),
+                new Creature("You", true, false, 100, 56, 10),
+                new Creature("Liam", true, false, 15000, 15000, 50),
             };
 
             // This is an example hand of cards that the player can use
@@ -103,48 +104,71 @@ namespace RPGCombatProject
             int enemieTargeted = 0;
             int playerTargeted = 0;
 
-
             while (true)
             {
-                // Display the current game state
-                DisplayGameState(enemieCreatures, playersTeam, enemieTargeted, playerTargeted, actionsRemaining, playersHand);
-
-                // Get the player's input
-                Console.Write("Enter the number of the card you want to play: ");
-                string? input = Console.ReadLine();
-                if (input == null)
+                while (true)
                 {
-                    Write("Input cannot be null. Please enter a valid number.");
-                    continue;
+                    // Display the current game state
+                    DisplayGameState(enemieCreatures, playersTeam, enemieTargeted, playerTargeted, actionsRemaining, playersHand);
+
+                    // Get the player's input
+                    Console.Write("Enter the number of the card you want to play (or 'T' to target, 'E' to end turn): ");
+                    string? input = Console.ReadLine();
+                    if (input == null)
+                    {
+                        Write("Input cannot be null. Please enter a valid input.");
+                        continue;
+                    }
+
+                    // Handle special commands
+                    if (input.ToUpper() == "E")
+                    {
+                        Write("Ending turn.");
+                        break; // End the turn
+                    }
+                    else if (input.ToUpper() == "T")
+                    {
+                        Console.Write("Enter the number of the enemy you want to target: ");
+                        string? targetInput = Console.ReadLine();
+                        if (targetInput == null || !int.TryParse(targetInput, out int targetNumber) || targetNumber < 1 || targetNumber > enemieCreatures.Count)
+                        {
+                            Write("Invalid target number. Please enter a valid number.");
+                            continue;
+                        }
+                        enemieTargeted = targetNumber - 1;
+                        Write($"Targeted enemy: {enemieCreatures[enemieTargeted].Name}");
+                        continue;
+                    }
+
+                    // Check if the input is a valid number
+                    if (!int.TryParse(input, out int cardNumber))
+                    {
+                        Write("Invalid input. Please enter a number.");
+                        continue;
+                    }
+
+                    // Check if the input is within the range of the player's hand
+                    if (cardNumber < 1 || cardNumber > playersHand.Count)
+                    {
+                        Write("Invalid input. Please enter a number within the range of your hand.");
+                        continue;
+                    }
+
+                    // Get the selected card from the player's hand
+                    Card selectedCard = playersHand[cardNumber - 1];
+
+                    // Check if the player has enough actions to play the card
+                    if (selectedCard.Actions > actionsRemaining)
+                    {
+                        Write("Not enough actions to play this card. Please select another card.");
+                        continue;
+                    }
+
+                    // Play the selected card
+                    PlayCard(selectedCard, enemieCreatures, playersTeam, ref actionsRemaining, ref enemieTargeted, ref playerTargeted);
+                    Write($"You played the card: {selectedCard.Name}");
                 }
-
-                // Check if the input is a valid number
-                if (!int.TryParse(input, out int cardNumber))
-                {
-                    Write("Invalid input. Please enter a number.");
-                    continue;
-                }
-
-                // Check if the input is within the range of the player's hand
-                if (cardNumber < 1 || cardNumber > playersHand.Count)
-                {
-                    Write("Invalid input. Please enter a number within the range of your hand.");
-                    continue;
-                }
-
-                // Get the selected card from the player's hand
-                Card selectedCard = playersHand[cardNumber - 1];
-
-                // Check if the player has enough actions to play the card
-                if (selectedCard.Actions > actionsRemaining)
-                {
-                    Write("Not enough actions to play this card. Please select another card.");
-                    continue;
-                }
-
-                // Play the selected card
-                PlayCard(selectedCard, enemieCreatures, playersTeam, ref actionsRemaining, ref enemieTargeted, ref playerTargeted);
-                Write($"You played the card: {selectedCard.Name}");
+                    
 
                 // Check if the combat is over
                 if (IsCombatOver(enemieCreatures, playersTeam))
