@@ -40,6 +40,14 @@ namespace RPGCombatProject
             Shield = shield;
             Effects = effects ?? new List<Effect>(); // Handle null list gracefully
         }
+            // Method to check if the creature is dead based on its health
+        public void CheckIfDead()
+        {
+            if (Health <= 0)
+            {
+                IsDead = true;
+            }
+        }
     }
 
     public class Card
@@ -84,7 +92,8 @@ namespace RPGCombatProject
             {
                 new Card("Sword", 1, "Deal 6 damage"),
                 new Card("Frost", 0, "Deal 1 damage to all enemies. Afflict 3 Frost."),
-                new Card("Deflect", 1, "Gain 5 Shield")
+                new Card("Deflect", 1, "Gain 5 Shield"),
+                new Card("One Shot", 0, "One shots any creature")
             };
 
             StartCombat(enemies, player, hand);
@@ -97,7 +106,7 @@ namespace RPGCombatProject
             // This will include setting up the enemies, the player's team, and the player's hand
         }
         // This is the main combat loop
-        static void StartCombat(List<Creature>enemieCreatures, List<Creature>playersTeam, List<Card>playersHand){
+        static void StartCombat(List<Creature>enemieTeam, List<Creature>playersTeam, List<Card>playersHand){
             // This is where the combat will be handled
             // These vairbels will be moved to SetUpCombat when the combat is fully set up
             int actionsRemaining = 3;
@@ -106,83 +115,81 @@ namespace RPGCombatProject
 
             while (true)
             {
-                while (true)
+                // Display the current game state
+                DisplayGameState(enemieTeam, playersTeam, enemieTargeted, playerTargeted, actionsRemaining, playersHand);
+
+                // Get the player's input
+                Console.Write("Enter the number of the card you want to play (or 'T' to target, 'E' to end turn): ");
+                string? input = Console.ReadLine();
+                if (input == null)
                 {
-                    // Display the current game state
-                    DisplayGameState(enemieCreatures, playersTeam, enemieTargeted, playerTargeted, actionsRemaining, playersHand);
-
-                    // Get the player's input
-                    Console.Write("Enter the number of the card you want to play (or 'T' to target, 'E' to end turn): ");
-                    string? input = Console.ReadLine();
-                    if (input == null)
-                    {
-                        Write("Input cannot be null. Please enter a valid input.");
-                        continue;
-                    }
-
-                    // Handle special commands
-                    if (input.ToUpper() == "E")
-                    {
-                        Write("Ending turn.");
-                        break; // End the turn
-                    }
-                    else if (input.ToUpper() == "T")
-                    {
-                        Console.Write("Enter the number of the enemy you want to target: ");
-                        string? targetInput = Console.ReadLine();
-                        if (targetInput == null || !int.TryParse(targetInput, out int targetNumber) || targetNumber < 1 || targetNumber > enemieCreatures.Count)
-                        {
-                            Write("Invalid target number. Please enter a valid number.");
-                            continue;
-                        }
-                        enemieTargeted = targetNumber - 1;
-                        Write($"Targeted enemy: {enemieCreatures[enemieTargeted].Name}");
-                        continue;
-                    }
-
-                    // Check if the input is a valid number
-                    if (!int.TryParse(input, out int cardNumber))
-                    {
-                        Write("Invalid input. Please enter a number.");
-                        continue;
-                    }
-
-                    // Check if the input is within the range of the player's hand
-                    if (cardNumber < 1 || cardNumber > playersHand.Count)
-                    {
-                        Write("Invalid input. Please enter a number within the range of your hand.");
-                        continue;
-                    }
-
-                    // Get the selected card from the player's hand
-                    Card selectedCard = playersHand[cardNumber - 1];
-
-                    // Check if the player has enough actions to play the card
-                    if (selectedCard.Actions > actionsRemaining)
-                    {
-                        Write("Not enough actions to play this card. Please select another card.");
-                        continue;
-                    }
-
-                    // Play the selected card
-                    PlayCard(selectedCard, enemieCreatures, playersTeam, ref actionsRemaining, ref enemieTargeted, ref playerTargeted);
-                    Write($"You played the card: {selectedCard.Name}");
+                    Write("Input cannot be null. Please enter a valid input.");
+                    continue;
                 }
-                    
+
+                // Handle special commands
+                if (input.ToUpper() == "E")
+                {
+                    Write("Ending turn.");
+                    break; // End the turn
+                }
+                else if (input.ToUpper() == "T")
+                {
+                    Console.Write("Enter the number of the enemy you want to target: ");
+                    string? targetInput = Console.ReadLine();
+                    if (targetInput == null || !int.TryParse(targetInput, out int targetNumber) || targetNumber < 1 || targetNumber > enemieTeam.Count)
+                    {
+                        Write("Invalid target number. Please enter a valid number.");
+                        continue;
+                    }
+                    enemieTargeted = targetNumber - 1;
+                    Write($"Targeted enemy: {enemieTeam[enemieTargeted].Name}");
+                    continue;
+                }
+
+                // Check if the input is a valid number
+                if (!int.TryParse(input, out int cardNumber))
+                {
+                    Write("Invalid input. Please enter a number.");
+                    continue;
+                }
+
+                // Check if the input is within the range of the player's hand
+                if (cardNumber < 1 || cardNumber > playersHand.Count)
+                {
+                    Write("Invalid input. Please enter a number within the range of your hand.");
+                    continue;
+                }
+
+                // Get the selected card from the player's hand
+                Card selectedCard = playersHand[cardNumber - 1];
+
+                // Check if the player has enough actions to play the card
+                if (selectedCard.Actions > actionsRemaining)
+                {
+                    Write("Not enough actions to play this card. Please select another card.");
+                    continue;
+                }
+
+                // Play the selected card
+                PlayCard(selectedCard, enemieTeam, playersTeam, ref actionsRemaining, ref enemieTargeted, ref playerTargeted);
+                Write($"You played the card: {selectedCard.Name}");
+
+                CheckIfDeadForAllCreatures(enemieTeam);
+                CheckIfDeadForAllCreatures(playersTeam);
+                DeleteDeadCreatures(enemieTeam);
 
                 // Check if the combat is over
-                if (IsCombatOver(enemieCreatures, playersTeam))
+                if (IsCombatOver(enemieTeam, playersTeam))
                 {
-                    // Display the final game state
-                    DisplayGameState(enemieCreatures, playersTeam, enemieTargeted, playerTargeted, actionsRemaining, playersHand);
-
                     // End the combat
                     break;
                 }
             }
+            Write("Combat has ended.");
         }
 
-        static void PlayCard(Card card, List<Creature> enemieCreatures, List<Creature> playersTeam, ref int actionsRemaining, ref int enemieTargeted, ref int playerTargeted)
+        static void PlayCard(Card card, List<Creature> enemieTeam, List<Creature> playersTeam, ref int actionsRemaining, ref int enemieTargeted, ref int playerTargeted)
         {
             // Decrease the number of actions remaining by the cost of the card
             actionsRemaining -= card.Actions;
@@ -192,7 +199,7 @@ namespace RPGCombatProject
             {
                 case "Sword":
                     // Deal 6 damage to the targeted enemy
-                    enemieCreatures[enemieTargeted].Health -= 6;
+                    enemieTeam[enemieTargeted].Health -= 6;
                     break;
                 case "Deflect":
                     // Gain 5 Shield
@@ -200,16 +207,34 @@ namespace RPGCombatProject
                     break;
                 case "Frost":
                     // Deal 1 damage to all enemies and afflict 3 Frost
-                    foreach (var enemy in enemieCreatures)
+                    foreach (var enemy in enemieTeam)
                     {
                         enemy.Health -= 1;
                         enemy.Effects.Add(new Effect("Frost", 3, 1));
                     }
                     break;
+                case "One Shot":
+                // One shots any creature
+                    enemieTeam[enemieTargeted].Health -= 999999;
+                    break;
             }
         }
 
-        static void Write(string text, bool waitForInput = true)
+        static void CheckIfDeadForAllCreatures(List<Creature> creatureTeam)
+        {
+            foreach (var creature in creatureTeam)
+            {
+                creature.CheckIfDead();
+            }
+        }
+        static void DeleteDeadCreatures(List<Creature> creatureTeam)
+        {
+            {
+                creatureTeam.RemoveAll(c => c.IsDead);
+            }
+        }
+
+        static void Write(string text, bool waitForInput = true, bool clearConsole = true)
         // Write a line of text to the console and wait for the user to press Enter
         {
             if (waitForInput)
@@ -221,23 +246,40 @@ namespace RPGCombatProject
             {
                 Console.WriteLine(text);
             }
+            if (clearConsole)
+            {
+                Console.Clear();
+            }
         }
 
-        static void DisplayGameState(List<Creature> enemieCreatures, List<Creature> playersTeam, int enemieTargeted, int playerTargeted, int actionsRemaining, List<Card> playersHand)
+        static void DisplayGameState(List<Creature> enemieTeam, List<Creature> playersTeam, int enemieTargeted, int playerTargeted, int actionsRemaining, List<Card> playersHand)
         // Display the current game state
         {
             Console.Clear();
-            PrintCreatureList("Enemies", enemieCreatures, enemieTargeted);
+            PrintCreatureList("Enemies", enemieTeam, enemieTargeted);
             PrintCreatureList("Your Team", playersTeam, playerTargeted);
             CombatOptions(actionsRemaining, playersHand);
         }
 
 
-        static bool IsCombatOver(List<Creature> enemieCreatures, List<Creature> playersTeam)
-        // Check if the combat is over
+        static bool IsCombatOver(List<Creature> enemieTeam, List<Creature> playersTeam)
         {
+            // Check if there are no enemies left
+            if (enemieTeam.Count == 0)
+            {
+                Write("There are no enemies left. You have won!");
+                return true;
+            }
+
+            // Check if there are no players left
+            if (playersTeam.Count == 0)
+            {
+                Write("There are no players left. Game over!");
+                return true;
+            }
+
             // Check if all enemies are dead
-            if (enemieCreatures.All(e => e.IsDead))
+            if (enemieTeam.All(e => e.IsDead))
             {
                 Write("You have defeated all enemies!");
                 return true;
