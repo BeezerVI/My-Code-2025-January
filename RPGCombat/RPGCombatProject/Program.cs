@@ -56,14 +56,44 @@ namespace RPGCombatProject
         public int Actions { get; set; }
         public string CardAbilitys { get; set; }
 
-        // Constructor to initialize a Card object
         public Card(string name, int actions, string cardAbilitys)
+            {
+                Name = name;
+                Actions = actions;
+                CardAbilitys = cardAbilitys;
+            }
+
+        public void Ability(List<Creature> enemyTeam, List<Creature> playerTeam, ref int enemyTargeted, ref int playerTargeted)
         {
-            Name = name;
-            Actions = actions;
-            CardAbilitys = cardAbilitys;
+            switch (Name)
+            {
+                case "Sword":
+                    enemyTeam[enemyTargeted].Health -= 6;
+                    Console.WriteLine($"Dealt 6 damage to {enemyTeam[enemyTargeted].Name}.");
+                    break;
+                case "Deflect":
+                    playerTeam[playerTargeted].Shield += 5;
+                    Console.WriteLine($"Gained 5 Shield for {playerTeam[playerTargeted].Name}.");
+                    break;
+                case "Frost":
+                    foreach (var enemy in enemyTeam)
+                    {
+                        enemy.Health -= 1;
+                        enemy.Effects.Add(new Effect("Frost", 3, 1));
+                    }
+                    Console.WriteLine("Dealt 1 damage to all enemies and afflicted 3 Frost.");
+                    break;
+                case "One Shot":
+                    enemyTeam[enemyTargeted].Health = 0;
+                    Console.WriteLine($"{enemyTeam[enemyTargeted].Name} has been one-shotted!");
+                    break;
+                default:
+                    Console.WriteLine("Card ability not implemented.");
+                    break;
+            }
         }
     }
+
 
     public class Program
     {
@@ -189,36 +219,20 @@ namespace RPGCombatProject
             Write("Combat has ended.");
         }
 
-        static void PlayCard(Card card, List<Creature> enemieTeam, List<Creature> playersTeam, ref int actionsRemaining, ref int enemieTargeted, ref int playerTargeted)
+        static void PlayCard(Card card, List<Creature> enemyTeam, List<Creature> playerTeam, ref int actionsRemaining, ref int enemyTargeted, ref int playerTargeted)
         {
-            // Decrease the number of actions remaining by the cost of the card
-            actionsRemaining -= card.Actions;
-
-            // Perform the card's ability based on its name
-            switch (card.Name)
+            // Check if the player has enough actions to play the card
+            if (card.Actions > actionsRemaining)
             {
-                case "Sword":
-                    // Deal 6 damage to the targeted enemy
-                    enemieTeam[enemieTargeted].Health -= 6;
-                    break;
-                case "Deflect":
-                    // Gain 5 Shield
-                    playersTeam[playerTargeted].Shield += 5;
-                    break;
-                case "Frost":
-                    // Deal 1 damage to all enemies and afflict 3 Frost
-                    foreach (var enemy in enemieTeam)
-                    {
-                        enemy.Health -= 1;
-                        enemy.Effects.Add(new Effect("Frost", 3, 1));
-                    }
-                    break;
-                case "One Shot":
-                // One shots any creature
-                    enemieTeam[enemieTargeted].Health -= 999999;
-                    break;
+                Console.WriteLine("Not enough actions to play this card.");
+                return;
             }
+
+            // Deduct actions and call the card's ability
+            actionsRemaining -= card.Actions;
+            card.Ability(enemyTeam, playerTeam, ref enemyTargeted, ref playerTargeted);
         }
+
 
         static void CheckIfDeadForAllCreatures(List<Creature> creatureTeam)
         {
